@@ -8,7 +8,11 @@
             "email": "andrewmontagne@gmail.com"
         }
     ],
-
+    "autoload": {
+        "psr-4": {
+            "Trident\\": "src/Trident/"
+        }
+    },
     "minimum-stability": "stable",
     "require": {
         "mikecao/flight": "^1.2"
