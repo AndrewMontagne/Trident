@@ -8,6 +8,9 @@
             "email": "andrewmontagne@gmail.com"
         }
     ],
+
     "minimum-stability": "stable",
-    "require": {}
+    "require": {
+        "mikecao/flight": "^1.2"
+    }
 }
