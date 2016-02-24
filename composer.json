@@ -1,0 +1,13 @@
+{
+    "name": "andrewmontagne/trident",
+    "description": "Git SCM, Markdown Wiki & Issue Tracking",
+    "license": "GPL",
+    "authors": [
+        {
+            "name": "Andrew Montagne",
+            "email": "andrewmontagne@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
