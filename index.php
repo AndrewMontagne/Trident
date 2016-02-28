@@ -4,7 +4,7 @@ require 'vendor/autoload.php';
 
 if(preg_match('/^git\/.*$/', $_SERVER['HTTP_USER_AGENT'])) { //Git client
     Flight::route('/git/*', function($route) {
-        $git = new \Trident\GitCgi($route->splat);
+        $git = new \Trident\GitCgi('/' . $route->splat);
         $git->handleCgi();
     }, true);
 } else { //Web browser

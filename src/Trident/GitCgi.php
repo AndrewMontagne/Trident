@@ -16,7 +16,7 @@ class GitCgi
     const PIPE_STDOUT = 1;
     const PIPE_STDERR = 2;
 
-    const GIT_HTTP_BACKEND = '/usr/lib/git-core/git-http-backend';
+    const GIT_HTTP_BACKEND = 'git http-backend';
     const GIT_CORE = '/usr/lib/git-core/';
 
     /**
@@ -44,19 +44,20 @@ class GitCgi
         $method = $_SERVER['REQUEST_METHOD'];
         $pipes = [];
         $environmentVariables = [
-            'GIT_PROJECT_ROOT' => '/srv/git',
+            'GIT_PROJECT_ROOT' => '/media/sf_Development',
             'REQUEST_METHOD' => $method,
             'PATH_INFO' =>  strtok($this->repoName, '?'),
             'GIT_HTTP_EXPORT_ALL' => '1',
             'QUERY_STRING' => $_SERVER['QUERY_STRING'],
             'GIT_COMMITTER_EMAIL' => 'andrewmontagne@gmail.com',
             'GIT_COMMITTER_NAME' => 'Andrew Montagne',
-            'GIT_HTTP_MAX_REQUEST_BUFFER' => '100M',
+            'GIT_HTTP_MAX_REQUEST_BUFFER' => '1k',
         ];
-        if('POST' == $method) {
-            $environmentVariables['CONTENT_TYPE'] = $_SERVER['CONTENT_TYPE'];
+
+        if($method == 'POST') {
+            $environmentVariables["CONTENT_TYPE"] = $_SERVER["CONTENT_TYPE"];
+            $environmentVariables["CONTENT_LENGTH"] = $_SERVER["CONTENT_LENGTH"];
         }
-        //$environmentVariables = $environmentVariables + $_SERVER; //Merge in the "CGI" variables
 
         $otherOptions = [
             'bypass_shell' => true,
@@ -77,70 +78,38 @@ class GitCgi
             $otherOptions);
 
         if($git && $method == 'POST') {
-            $readbuffer = fopen('php://input', 'r');
-            $toWrite = '';
-            while (true) {
-                if ($toWrite == '') {
-                    if (feof($readbuffer)) break;
-                    $toWrite = fread($readbuffer, 4096);
-                    file_put_contents('/tmp/trident.log', $toWrite, FILE_APPEND);
-                }
-                $l = fwrite($pipes[self::PIPE_STDIN], $toWrite);
-                if ($l === false) {
-                    echo 'Error writing to process';
-                } else {
-                    if ($l == 0) {
-                        echo "Empty </br>";
-                        usleep(1000);
-                    } else {
-                        $toWrite = '';
-                    }
-                }
-                fflush($pipes[self::PIPE_STDIN]);
+            $postData = fopen('php://input', 'r');
+            while(!feof($postData)) {
+                fwrite($pipes[self::PIPE_STDIN], fread($postData, 1));
             }
+            fflush($pipes[self::PIPE_STDIN]);
+            fclose($postData);
+            fclose($pipes[self::PIPE_STDIN]);
         } else if(!$git) {
-            header("HTTP/1.0 500 Internal Server Error");
-            echo "<h1>Could not open cgi process</h1>";
+            header("HTTP/1.1 503 Service Unavailable");
             exit(1);
         }
 
-        $cgi_out = $pipes[self::PIPE_STDOUT];
+        $headersDone = false;
+        while (!feof($pipes[self::PIPE_STDOUT]) && !$headersDone)
+        {
+            $header = fgets($pipes[self::PIPE_STDOUT], 10000000);
+            $header = trim($header);
 
-        $totalResponse = '';
-
-        $buffer = '';
-        while(!feof($cgi_out)) {
-            $char = fread($cgi_out, 1);
-            $totalResponse .= $char;
-
-            if("\n" == $char) {
-                if(strlen($buffer) < 2) {
-                    break;
+            if(!$headersDone) {
+                if(trim($header) == '') {
+                    $headersDone = true;
+                } else {
+                    header($header);
                 }
-                header($buffer);
-                if(strtok($buffer, ': ') == 'Status') {
-                    header('HTTP/1.1 ' . strtok(null));
-                }
-                $buffer = '';
-            } else {
-                $buffer .= $char;
             }
-
-            $lastChar = $char;
         }
 
-        while(!feof($cgi_out)) {
-            $data = fread($cgi_out, 8192);
-            echo $data;
-            $totalResponse .= $data;
+        while(!feof($pipes[self::PIPE_STDOUT])) {
+            $response = fread($pipes[self::PIPE_STDOUT], 1);
+            file_put_contents('/tmp/trident.log', $response, FILE_APPEND);
+            echo $response;
         }
-
-        file_put_contents('/tmp/trident.log', 'BEGIN DEBUG LOG' . PHP_EOL . PHP_EOL);
-        file_put_contents('/tmp/trident.log', $totalResponse, FILE_APPEND);
-        file_put_contents('/tmp/trident.log', fread($pipes[self::PIPE_STDERR], 8192), FILE_APPEND);
-        file_put_contents('/tmp/trident.log', PHP_EOL . 'DEBUG:', FILE_APPEND);
-        file_put_contents('/tmp/trident.log', json_encode($environmentVariables, JSON_PRETTY_PRINT), FILE_APPEND);
-        file_put_contents('/tmp/trident.log', json_encode(getallheaders(), JSON_PRETTY_PRINT), FILE_APPEND);
 
         exit(0);
     }
