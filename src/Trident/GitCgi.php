@@ -16,6 +16,9 @@ class GitCgi
     const PIPE_STDOUT = 1;
     const PIPE_STDERR = 2;
 
+    const GIT_HTTP_BACKEND = '/usr/lib/git-core/git-http-backend';
+    const GIT_CORE = '/usr/lib/git-core/';
+
     /**
      * @var string
      */
@@ -27,7 +30,7 @@ class GitCgi
      */
     public function __construct($repo)
     {
-        $this->repoName = '/' . $repo;
+        $this->repoName = $repo;
     }
 
     /**
@@ -41,33 +44,35 @@ class GitCgi
         $method = $_SERVER['REQUEST_METHOD'];
         $pipes = [];
         $environmentVariables = [
-            'GIT_PROJECT_ROOT' => '/media/sf_Development',
-            'PATH_INFO' => $this->repoName,
-            'REMOTE_USER' => 'andrew',
-            'REMOTE_ADDR' => 'git.local',
-            'QUERY_STRING' => $_SERVER['QUERY_STRING'],
-            'GIT_HTTP_EXPORT_ALL' => 'TRUE',
+            'GIT_PROJECT_ROOT' => '/srv/git',
             'REQUEST_METHOD' => $method,
+            'PATH_INFO' =>  strtok($this->repoName, '?'),
+            'GIT_HTTP_EXPORT_ALL' => '1',
+            'QUERY_STRING' => $_SERVER['QUERY_STRING'],
+            'GIT_COMMITTER_EMAIL' => 'andrewmontagne@gmail.com',
+            'GIT_COMMITTER_NAME' => 'Andrew Montagne',
+            'GIT_HTTP_MAX_REQUEST_BUFFER' => '100M',
         ];
+        if('POST' == $method) {
+            $environmentVariables['CONTENT_TYPE'] = $_SERVER['CONTENT_TYPE'];
+        }
+        //$environmentVariables = $environmentVariables + $_SERVER; //Merge in the "CGI" variables
+
         $otherOptions = [
-            'suppress_errors' => true,
             'bypass_shell' => true,
         ];
 
-        $descriptorSpec = [];
-        if($method == 'POST') {
-            $descriptorSpec[self::PIPE_STDIN] = ['pipe', 'r'];
-            $descriptorSpec[self::PIPE_STDOUT] = ['pipe', 'w'];
-            $descriptorSpec[self::PIPE_STDERR] = ['pipe', 'w'];
-        } else {
-            $descriptorSpec[self::PIPE_STDOUT] = ['pipe', 'w'];
-        }
+        $descriptorSpec = [
+            self::PIPE_STDIN => ['pipe', 'r'],
+            self::PIPE_STDOUT => ['pipe', 'w'],
+            self::PIPE_STDERR => ['pipe', 'w'],
+        ];
 
         $git = proc_open(
-            'git http-backend',
+            self::GIT_HTTP_BACKEND,
             $descriptorSpec,
             $pipes,
-            ROOT_DIR,
+            self::GIT_CORE,
             $environmentVariables,
             $otherOptions);
 
@@ -78,6 +83,7 @@ class GitCgi
                 if ($toWrite == '') {
                     if (feof($readbuffer)) break;
                     $toWrite = fread($readbuffer, 4096);
+                    file_put_contents('/tmp/trident.log', $toWrite, FILE_APPEND);
                 }
                 $l = fwrite($pipes[self::PIPE_STDIN], $toWrite);
                 if ($l === false) {
@@ -112,6 +118,9 @@ class GitCgi
                     break;
                 }
                 header($buffer);
+                if(strtok($buffer, ': ') == 'Status') {
+                    header('HTTP/1.1 ' . strtok(null));
+                }
                 $buffer = '';
             } else {
                 $buffer .= $char;
@@ -126,7 +135,12 @@ class GitCgi
             $totalResponse .= $data;
         }
 
-        error_log($totalResponse);
+        file_put_contents('/tmp/trident.log', 'BEGIN DEBUG LOG' . PHP_EOL . PHP_EOL);
+        file_put_contents('/tmp/trident.log', $totalResponse, FILE_APPEND);
+        file_put_contents('/tmp/trident.log', fread($pipes[self::PIPE_STDERR], 8192), FILE_APPEND);
+        file_put_contents('/tmp/trident.log', PHP_EOL . 'DEBUG:', FILE_APPEND);
+        file_put_contents('/tmp/trident.log', json_encode($environmentVariables, JSON_PRETTY_PRINT), FILE_APPEND);
+        file_put_contents('/tmp/trident.log', json_encode(getallheaders(), JSON_PRETTY_PRINT), FILE_APPEND);
 
         exit(0);
     }
