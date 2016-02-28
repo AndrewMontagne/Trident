@@ -8,8 +8,6 @@
 
 namespace Trident;
 
-//Refer to: http://www.tcl.tk/man/aolserver3.0/cgi-ch4.htm
-
 class GitCgi
 {
     const PIPE_STDIN = 0;
@@ -17,7 +15,6 @@ class GitCgi
     const PIPE_STDERR = 2;
 
     const GIT_HTTP_BACKEND = 'git http-backend';
-    const GIT_CORE = '/usr/lib/git-core/';
 
     /**
      * @var string
@@ -35,9 +32,6 @@ class GitCgi
 
     /**
      * Handles the invocation of the Git CGI interface
-     *
-     * Adapted from http://nerds-central.blogspot.co.uk/2007/08/php-cgi-handler-using-procopen.html
-     * Many thanks to Alexander Turner
      */
     public function handleCgi()
     {
@@ -74,7 +68,7 @@ class GitCgi
             self::GIT_HTTP_BACKEND,
             $descriptorSpec,
             $pipes,
-            self::GIT_CORE,
+            null,
             $environmentVariables,
             $otherOptions);
 
@@ -95,7 +89,7 @@ class GitCgi
         $headersDone = false;
         while (!feof($pipes[self::PIPE_STDOUT]) && !$headersDone)
         {
-            $header = fgets($pipes[self::PIPE_STDOUT], 10000000);
+            $header = fgets($pipes[self::PIPE_STDOUT], 8192);
             $header = trim($header);
 
             if(!$headersDone) {
@@ -108,8 +102,7 @@ class GitCgi
         }
 
         while(!feof($pipes[self::PIPE_STDOUT])) {
-            $response = fread($pipes[self::PIPE_STDOUT], 1);
-            file_put_contents('/tmp/trident.log', $response, FILE_APPEND);
+            $response = fread($pipes[self::PIPE_STDOUT], 8192);
             echo $response;
         }
 
