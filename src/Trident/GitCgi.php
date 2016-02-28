@@ -49,6 +49,8 @@ class GitCgi
             'PATH_INFO' =>  strtok($this->repoName, '?'),
             'GIT_HTTP_EXPORT_ALL' => '1',
             'QUERY_STRING' => $_SERVER['QUERY_STRING'],
+            'REMOTE_USER' => 'andrew',
+            'REMOTE_ADDR' => '127.0.0.1',
             'GIT_COMMITTER_EMAIL' => 'andrewmontagne@gmail.com',
             'GIT_COMMITTER_NAME' => 'Andrew Montagne',
             'GIT_HTTP_MAX_REQUEST_BUFFER' => '1k',
@@ -66,7 +68,6 @@ class GitCgi
         $descriptorSpec = [
             self::PIPE_STDIN => ['pipe', 'r'],
             self::PIPE_STDOUT => ['pipe', 'w'],
-            self::PIPE_STDERR => ['pipe', 'w'],
         ];
 
         $git = proc_open(
@@ -84,11 +85,12 @@ class GitCgi
             }
             fflush($pipes[self::PIPE_STDIN]);
             fclose($postData);
-            fclose($pipes[self::PIPE_STDIN]);
         } else if(!$git) {
             header("HTTP/1.1 503 Service Unavailable");
             exit(1);
         }
+
+        fclose($pipes[self::PIPE_STDIN]);
 
         $headersDone = false;
         while (!feof($pipes[self::PIPE_STDOUT]) && !$headersDone)
@@ -110,6 +112,8 @@ class GitCgi
             file_put_contents('/tmp/trident.log', $response, FILE_APPEND);
             echo $response;
         }
+
+        fclose($pipes[self::PIPE_STDOUT]);
 
         exit(0);
     }
