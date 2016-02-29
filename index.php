@@ -1,6 +1,9 @@
 <?php
-require 'vendor/autoload.php';
+/**
+ * Copyright ${YEAR} Andrew O'Rourke
+ */
 
+require 'vendor/autoload.php';
 
 if(preg_match('/^git\/.*$/', $_SERVER['HTTP_USER_AGENT'])) { //Git client
     Flight::route('/git/*', function($route) {

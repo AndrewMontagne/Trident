@@ -1,9 +1,6 @@
 <?php
 /**
- * Created by IntelliJ IDEA.
- * User: Andrew
- * Date: 24/02/2016
- * Time: 23:11
+ * Copyright 2016 Andrew O'Rourke
  */
 
 namespace Trident;
