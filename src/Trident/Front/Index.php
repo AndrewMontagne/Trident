@@ -5,11 +5,14 @@
 
 namespace Trident\Front;
 
+use \Flight, \Parsedown;
 
 class Index
 {
     public static function indexAction()
     {
-        \Flight::render('front/index.html');
+        $markdownEngine = new Parsedown();
+        $content = $markdownEngine->text(file_get_contents(ROOT_DIR . '/README.md'));
+        \Flight::render('front/index.html', ['body_content' => $content]);
     }
 }
