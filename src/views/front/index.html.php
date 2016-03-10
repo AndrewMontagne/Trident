@@ -8,7 +8,67 @@
     <link rel="stylesheet" href="css/pure.css">
     <link rel="stylesheet" href="css/fonts/octicons/octicons.css">
     <link rel="stylesheet" href="css/layouts/side-menu.css">
+    <script src="js/jquery-1.12.1.min.js"></script>
     <link href='https://fonts.googleapis.com/css?family=Play:400,700' rel='stylesheet' type='text/css'>
+    <script>
+        $(document).on('keydown', function (e) {
+            if (e.keyCode === 27 && $('.modal-iframe').is(":visible")) { // ESC
+                $('.modal-iframe').fadeOut(400);
+            }
+        });
+    </script>
+    <style>
+        .blurred
+        {
+            filter: blur(5px) grayscale(50%);
+            -webkit-filter: blur(5px) grayscale(50%);
+        }
+        .modal-iframe
+        {
+            background-color: rgba(0,0,0,0.5);
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            z-index: 1001;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+        .modal-iframe-content
+        {
+            background-color: white;
+            position: absolute;
+            width: 512px;
+            height: 512px;
+            left: calc(50% - 256px);
+            top: calc(50% - 256px);
+            box-shadow: 0px 0px 50px rgba(0,0,0,0.5);
+        }
+        .modal-iframe-content.tall
+        {
+            width: 480px;
+            height: 640px;
+            left: calc(50% - 240px);
+            top: calc(50% - 320px);
+        }
+        .modal-iframe-content.wide
+        {
+            width: 640px;
+            height: 480px;
+            left: calc(50% - 320px);
+            top: calc(50% - 240px);
+        }
+        .modal-iframe-content iframe
+        {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            border: 0px;
+        }
+    </style>
 </head>
 <body>
 <div id="layout">
@@ -41,5 +101,10 @@
     </div>
 </div>
 <script src="js/ui.js"></script>
+<div class="modal-iframe">
+    <div class="modal-iframe-content wide">
+        <iframe src=""></iframe>
+    </div>
+</div>
 </body>
 </html>
