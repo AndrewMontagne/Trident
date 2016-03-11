@@ -11,9 +11,19 @@
     <script src="js/jquery-1.12.1.min.js"></script>
     <link href='https://fonts.googleapis.com/css?family=Play:400,700' rel='stylesheet' type='text/css'>
     <script>
+        function hideModal() {
+            $('.modal-iframe').fadeOut(200, function (e) {
+                $(".modal-iframe-content iframe").attr("src", "");
+            });
+        }
+        function displayModal(url, type) {
+            $('.modal-iframe-content').attr("class", "modal-iframe-content " + type);
+            $(".modal-iframe-content iframe").attr("src", url);
+            $('.modal-iframe').fadeIn(200);
+        }
         $(document).on('keydown', function (e) {
             if (e.keyCode === 27 && $('.modal-iframe').is(":visible")) { // ESC
-                $('.modal-iframe').fadeOut(400);
+                hideModal();
             }
         });
     </script>
@@ -39,25 +49,26 @@
         {
             background-color: white;
             position: absolute;
-            width: 512px;
-            height: 512px;
-            left: calc(50% - 256px);
-            top: calc(50% - 256px);
-            box-shadow: 0px 0px 50px rgba(0,0,0,0.5);
-        }
-        .modal-iframe-content.tall
-        {
-            width: 480px;
-            height: 640px;
-            left: calc(50% - 240px);
-            top: calc(50% - 320px);
+            width: 400px;
+            height: 500px;
+            left: calc(50% - 200px);
+            top: calc(50% - 250px);
+            box-shadow: 0px 10px 50px rgba(0,0,0,0.5);
         }
         .modal-iframe-content.wide
         {
-            width: 640px;
-            height: 480px;
-            left: calc(50% - 320px);
-            top: calc(50% - 240px);
+            width: 500px;
+            left: calc(50% - 256px);
+        }
+        .modal-iframe-content.narrow
+        {
+            width: 300px;
+            left: calc(50% - 150px);
+        }
+        .modal-iframe-content.short
+        {
+            height: 400px;
+            top: calc(50% - 200px);
         }
         .modal-iframe-content iframe
         {
@@ -83,7 +94,7 @@
             <a class="pure-menu-heading" href="#"><i class="mega-octicon octicon-git-branch"></i>Trident</a>
 
             <ul class="pure-menu-list">
-                <li class="pure-menu-item"><a href="#" class="pure-menu-link"><i class="octicon octicon-sign-in"></i> Sign In</a></li>
+                <li class="pure-menu-item"><a href="#" onclick="displayModal('http://blog.montagne.uk/?m=1', 'narrow short')" class="pure-menu-link"><i class="octicon octicon-sign-in"></i> Sign In</a></li>
                 <li class="pure-menu-item"><a href="#" class="pure-menu-link"><i class="octicon octicon-repo"></i> Repos</a></li>
             </ul>
         </div>
@@ -101,8 +112,8 @@
     </div>
 </div>
 <script src="js/ui.js"></script>
-<div class="modal-iframe">
-    <div class="modal-iframe-content wide">
+<div class="modal-iframe" style="display: none;" onclick="hideModal();">
+    <div class="modal-iframe-content">
         <iframe src=""></iframe>
     </div>
 </div>
