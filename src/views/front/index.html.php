@@ -79,6 +79,15 @@
             height: 100%;
             border: 0px;
         }
+        .modal-iframe-content .spinner
+        {
+            position: absolute;
+            left: calc(50% - 32px);
+            top: calc(50% - 32px);
+            width: 64px;
+            height: 64px;
+            border: 0px;
+        }
     </style>
 </head>
 <body>
@@ -114,6 +123,7 @@
 <script src="js/ui.js"></script>
 <div class="modal-iframe" style="display: none;" onclick="hideModal();">
     <div class="modal-iframe-content">
+        <img class="spinner" src="/img/spinner.svg">
         <iframe src=""></iframe>
     </div>
 </div>
