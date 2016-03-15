@@ -6,3 +6,5 @@ php:
 before_install:
   - composer self-update
   - composer install
+
+script: php ./src/MuUnit/MuUnit.php;
