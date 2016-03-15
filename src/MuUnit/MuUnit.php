@@ -1,6 +1,6 @@
 <?php
 
-require 'vendor/autoload.php';
+require __DIR__ . '/../../vendor/autoload.php';
 
 echo 'MuUnit v1.0.0' . PHP_EOL . PHP_EOL;
 
