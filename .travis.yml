@@ -7,4 +7,4 @@ before_install:
   - composer install
   - composer dump-autoload
 
-script: php ./src/MuUnit/MuUnit.php;
+script: php ./vendor/phpunit/phpunit/phpunit ./src/

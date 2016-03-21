@@ -19,5 +19,8 @@
         "mikecao/flight": "^1.2",
         "j4mie/paris": "^1.5",
         "erusev/parsedown": "^1.6"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "5.2.*"
     }
 }
