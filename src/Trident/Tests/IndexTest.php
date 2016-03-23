@@ -5,23 +5,11 @@
 
 namespace Trident\Tests;
 
-use \MuUnit\Test;
 
-
-class IndexTest extends Test
+class IndexTest extends \PHPUnit_Framework_TestCase
 {
-    public function datasourceTest()
+    public function testTest()
     {
-        return [1,2,4,8,16,32];
-    }
-
-    public function testTest($var)
-    {
-        usleep(rand(0,200000));
-
-        echo $var . PHP_EOL;
-
-        $this->assert($var !== 0);
-        $this->assert(true);
+        $this->assertEquals(true, true);
     }
 }
