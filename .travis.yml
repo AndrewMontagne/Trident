@@ -9,6 +9,8 @@ before_install:
 
 script: php ./vendor/phpunit/phpunit/phpunit
 
+after_script: ./codeclimate.sh
+
 addons:
     code_climate:
         repo_token: 09ae80a14bd9f525997ee392a5391b1e805db2531cf2b74efb9529a76629aebf
