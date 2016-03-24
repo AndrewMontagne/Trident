@@ -35,7 +35,7 @@ class GitCgi
         $method = $_SERVER['REQUEST_METHOD'];
         $pipes = [];
         $environmentVariables = [
-            'GIT_PROJECT_ROOT' => '/media/sf_Development',
+            'GIT_PROJECT_ROOT' => '/srv/git',
             'REQUEST_METHOD' => $method,
             'PATH_INFO' =>  strtok($this->repoName, '?'),
             'GIT_HTTP_EXPORT_ALL' => '1',

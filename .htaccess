@@ -1,4 +1,7 @@
 RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^css/(.*)$ static/css/$1 [L]
+RewriteRule ^js/(.*)$ static/js/$1 [L]
+RewriteRule ^img/(.*)$ static/img/$1 [L]
+RewriteRule ^asset/(.*)$ static/asset/$1 [L]
+RewriteRule ^static($|/) - [L]
 RewriteRule ^(.*)$ index.php [QSA,L]
