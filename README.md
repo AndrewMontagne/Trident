@@ -1,7 +1,9 @@
 Trident
 =======
 
-[![Latest Stable Version](https://poser.pugx.org/andrewmontagne/trident/v/stable.png)](https://packagist.org/packages/andrewmontagne/trident) [![Total Downloads](https://poser.pugx.org/andrewmontagne/trident/downloads.png)](https://packagist.org/packages/andrewmontagne/trident) [![Code Climate](https://codeclimate.com/github/AndrewMontagne/Trident/badges/gpa.svg)](https://codeclimate.com/github/AndrewMontagne/Trident) [![Build Status](https://travis-ci.org/AndrewMontagne/Trident.svg?branch=master)](https://travis-ci.org/AndrewMontagne/Trident)
+[![Latest Stable Version](https://img.shields.io/packagist/v/AndrewMontagne/Trident.svg?style=flat-square&label=stable)](https://packagist.org/packages/andrewmontagne/trident) [![Total Downloads](https://img.shields.io/packagist/dt/AndrewMontagne/Trident.svg?style=flat-square&label=downloads)](https://packagist.org/packages/andrewmontagne/trident) [![Codacy Badge](https://img.shields.io/codacy/e10eadc29f4e43f49b3969e831213932.svg?style=flat-square&label=quality)](https://www.codacy.com/app/andrewmontagne/Trident) [![Build Status](https://img.shields.io/travis/AndrewMontagne/Trident.svg?style=flat-square)](https://travis-ci.org/AndrewMontagne/Trident)
+
+---------------------------------------
 
 All-in one development package written in PHP.
 

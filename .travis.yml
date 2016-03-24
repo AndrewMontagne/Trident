@@ -3,14 +3,12 @@ php:
   - '5.6'
   - '7.0'
 
-before_install:
-  - composer install
-  - composer dump-autoload
+before_script:
+  - curl -s http://getcomposer.org/installer | php
+  - php composer.phar install -n
 
-script: php ./vendor/phpunit/phpunit/phpunit
+script:
+  - php vendor/bin/phpunit
 
-after_script: ./codeclimate.sh
-
-addons:
-    code_climate:
-        repo_token: 09ae80a14bd9f525997ee392a5391b1e805db2531cf2b74efb9529a76629aebf
+after_script:
+  - php vendor/bin/codacycoverage clover build/coverage.xml
