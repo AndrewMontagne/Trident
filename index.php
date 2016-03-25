@@ -10,6 +10,11 @@ require 'vendor/autoload.php';
 
 define('ROOT_DIR', $_SERVER['DOCUMENT_ROOT']);
 
+
+ORM::configure('mysql:host=localhost;dbname=trident');
+ORM::configure('username', 'trident');
+ORM::configure('password', 'p@ssw0rd');
+
 Flight::set('flight.views.path', ROOT_DIR . 'src/views');
 
 if(preg_match('/^git\/.*$/', $_SERVER['HTTP_USER_AGENT'])) { //Git client
